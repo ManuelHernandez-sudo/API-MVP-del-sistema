@@ -1,0 +1,117 @@
+openapi: 3.0.0
+info:
+  title: Appointment API
+  version: 1.0.0
+  description: API para gestión de citas médicas (MVP)
+
+servers:
+  - url: http://127.0.0.1:8000
+
+paths:
+  /appointments:
+    post:
+      summary: Crear una cita médica
+      description: Permite registrar una nueva cita en el sistema
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - patient_name
+                - date
+              properties:
+                patient_name:
+                  type: string
+                  example: Juan Perez
+                date:
+                  type: string
+                  example: 2026-03-20
+      responses:
+        "200":
+          description: Cita creada exitosamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Appointment'
+        "400":
+          description: Error en los datos enviados
+
+    get:
+      summary: Listar todas las citas
+      description: Devuelve una lista de todas las citas registradas
+      responses:
+        "200":
+          description: Lista de citas
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Appointment'
+
+  /appointments/{id}:
+    get:
+      summary: Obtener una cita por ID
+      description: Devuelve la información de una cita específica
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Cita encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Appointment'
+        "404":
+          description: Cita no encontrada
+
+  /appointments/{id}/status:
+    put:
+      summary: Actualizar estado de una cita
+      description: Permite cambiar el estado de una cita existente
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: status
+          in: query
+          required: true
+          schema:
+            type: string
+            enum: [pending, confirmed, cancelled]
+      responses:
+        "200":
+          description: Estado actualizado correctamente
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Appointment'
+        "404":
+          description: Cita no encontrada
+
+components:
+  schemas:
+    Appointment:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1
+        patient_name:
+          type: string
+          example: Juan Perez
+        date:
+          type: string
+          example: 2026-03-20
+        status:
+          type: string
+          enum: [pending, confirmed, cancelled]
+          example: pending
