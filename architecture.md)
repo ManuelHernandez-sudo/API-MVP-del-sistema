@@ -1,4 +1,0 @@
-flowchart TD
-    Client --> API[FastAPI]
-    API --> Service[Business Logic]
-    Service --> DB[(In-Memory Storage)]
